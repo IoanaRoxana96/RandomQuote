@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quote"
+        android:id="@+id/quote"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editQuote"
+        android:layout_alignParentTop="@+id/quote"
+        android:layout_toRightOf="@+id/quote"
+        android:layout_toEndOf="@+id/quote"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Quote"
+        android:id="@+id/button_add"
+        android:layout_below="@+id/editQuote"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="80dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View all quotes"
+        android:id="@+id/button_view"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/button_random"/>
+
+    <Button
+        android:id="@+id/button_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_view"
+        android:layout_alignStart="@+id/button_view"
+        android:layout_alignLeft="@+id/button_view"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="-134dp"
+        android:layout_marginLeft="-134dp"
+        android:layout_marginTop="40dp"
+        android:text="Delete Quote" />
+
+    <Button
+        android:id="@+id/button_random"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_add"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="-3dp"
+        android:layout_marginLeft="-3dp"
+        android:layout_marginTop="123dp"
+        android:text="Give me a random quote" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="ID"
+        android:id="@+id/textViewId"
+        android:layout_below="@+id/editQuote"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editQuoteId"
+        android:layout_alignTop="@+id/textViewId"
+        android:layout_toRightOf="@+id/quote"
+        android:layout_toEndOf="@+id/quote"/>
+
+</RelativeLayout>
