@@ -3,8 +3,8 @@ package com.example.randomquotes;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Quotes.db";
@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate (SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, QUOTE TEXT)" );
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT," +  COL_2  + " TEXT NOT NULL UNIQUE ON CONFLICT FAIL)");
     }
 
     @Override
@@ -37,6 +37,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         else
             return true;
+
+    }
+
+    public Cursor checkQuote(String quote) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("SELECT " + COL_2 + " FROM " + TABLE_NAME, null);
+        return res;
     }
 
     public Cursor getAllQuotes() {
@@ -55,4 +62,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "ID = ?", new String[] {id});
     }
+
 }

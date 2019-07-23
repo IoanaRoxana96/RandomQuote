@@ -76,12 +76,19 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Cursor res = myDb.checkQuote(editQuote.getText().toString());
+                        if(res.getCount() != 0) {
+                            showMessage("Error", "Quote already exist");
+                            return;
+                        }
+
                         boolean isInserted = myDb.insertQuote(editQuote.getText().toString());
                         if (isInserted == true)
                             Toast.makeText(MainActivity.this, "Quote inserted", Toast.LENGTH_LONG).show();
                         else
                             Toast.makeText(MainActivity.this, "Quote not inserted", Toast.LENGTH_LONG).show();
-                    }
+                        editQuote.setText("");
+                   }
                 }
         );
     }
@@ -116,19 +123,4 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem, item) {
-        int id = item.getItem();
-        if(id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 }
