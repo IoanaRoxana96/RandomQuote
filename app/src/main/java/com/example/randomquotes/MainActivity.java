@@ -76,22 +76,21 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Cursor res = myDb.checkQuote(editQuote.getText().toString());
-                        if(res.getCount() != 0) {
-                            showMessage("Error", "Quote already exist");
-                            return;
+                        boolean quoteExists = myDb.checkQuote(editQuote.getText().toString());
+                        if (quoteExists == false) {
+                            Toast.makeText(getBaseContext(), "Quote already exist. Please add another one", Toast.LENGTH_LONG).show();
+                        } else {
+                            myDb.insertQuote(editQuote.getText().toString());
+                            Toast.makeText(getBaseContext(), "Quote inserted", Toast.LENGTH_LONG).show();
                         }
-
-                        boolean isInserted = myDb.insertQuote(editQuote.getText().toString());
-                        if (isInserted == true)
-                            Toast.makeText(MainActivity.this, "Quote inserted", Toast.LENGTH_LONG).show();
-                        else
-                            Toast.makeText(MainActivity.this, "Quote not inserted", Toast.LENGTH_LONG).show();
                         editQuote.setText("");
-                   }
+
+                    }
                 }
         );
+
     }
+
 
     public void ViewAllQuotes() {
         viewAllQuotes.setOnClickListener(
