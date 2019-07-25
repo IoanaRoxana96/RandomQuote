@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         boolean quoteExists = myDb.checkQuote(editQuote.getText().toString());
-                        if (quoteExists == false) {
+                        if (quoteExists == true) {
                             Toast.makeText(getBaseContext(), "Quote already exist. Please add another one", Toast.LENGTH_LONG).show();
                         } else {
                             myDb.insertQuote(editQuote.getText().toString());

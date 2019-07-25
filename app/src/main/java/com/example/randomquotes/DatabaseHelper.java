@@ -39,31 +39,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
-
-    /*public Cursor checkQuote(String quote) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("SELECT " + COL_2 + " FROM " + TABLE_NAME + " WHERE QUOTE = " + COL_2, null);
-        return res;
-    }*/
-
-    /*public boolean checkQuote (String quote) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + COL_2 + " FROM " + TABLE_NAME + " WHERE " + COL_2 + " = " + quote, null);
-        if (cursor.getCount() <= 0) {
-            cursor.close();
-            return false;
-        } else {
-            cursor.close();
-            return true;
-        }
-    }*/
+    
 
     public boolean checkQuote (String quote) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT QUOTE FROM " + TABLE_NAME + " WHERE QUOTE =? " + " COLLATE NOCASE ", new  String[] {quote});
         if(cursor.getCount() > 0)
-            return false;
-        return true;
+            return true;
+        return false;
     }
 
     public Cursor getAllQuotes() {
