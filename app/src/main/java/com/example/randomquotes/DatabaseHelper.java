@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean checkQuote (String quote) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT QUOTE FROM " + TABLE_NAME + " WHERE QUOTE =? ", new  String[] {quote});
+        Cursor cursor = db.rawQuery("SELECT QUOTE FROM " + TABLE_NAME + " WHERE QUOTE =? " + " COLLATE NOCASE ", new  String[] {quote});
         if(cursor.getCount() > 0)
             return false;
         return true;
