@@ -7,31 +7,38 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/quote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Quote"
-        android:id="@+id/quote"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="13dp"
+        android:text="Quote" />
 
     <EditText
+        android:id="@+id/editQuote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editQuote"
         android:layout_alignParentTop="@+id/quote"
-        android:layout_toRightOf="@+id/quote"
-        android:layout_toEndOf="@+id/quote"/>
+        android:layout_marginStart="187dp"
+        android:layout_marginLeft="187dp"
+        android:layout_toEndOf="@+id/quote"
+        android:layout_toRightOf="@+id/quote" />
 
     <Button
+        android:id="@+id/button_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Quote"
-        android:id="@+id/button_add"
         android:layout_below="@+id/editQuote"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="80dp"/>
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="57dp"
+        android:text="Add Quote" />
 
     <Button
         android:layout_width="wrap_content"
@@ -49,9 +56,9 @@
         android:layout_alignStart="@+id/button_view"
         android:layout_alignLeft="@+id/button_view"
         android:layout_centerVertical="true"
-        android:layout_marginStart="-134dp"
-        android:layout_marginLeft="-134dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="-130dp"
+        android:layout_marginLeft="-130dp"
+        android:layout_marginTop="7dp"
         android:text="Delete Quote" />
 
     <Button
@@ -61,27 +68,52 @@
         android:layout_below="@+id/button_add"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="-3dp"
-        android:layout_marginLeft="-3dp"
-        android:layout_marginTop="123dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="63dp"
         android:text="Give me a random quote" />
 
-    <TextView
+    <Button
+        android:id="@+id/button_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="ID"
-        android:id="@+id/textViewId"
-        android:layout_below="@+id/editQuote"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="260dp"
+        android:text="Top quotes" />
+
+    <TextView
+        android:id="@+id/textViewId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editQuote"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="25dp"
+        android:text="ID"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/randomQuote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="210dp"
+        android:layout_marginLeft="240dp"
+        android:textSize="30dp"/>
 
     <EditText
+        android:id="@+id/editQuoteId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editQuoteId"
         android:layout_alignTop="@+id/textViewId"
-        android:layout_toRightOf="@+id/quote"
-        android:layout_toEndOf="@+id/quote"/>
+        android:layout_marginStart="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="-13dp"
+        android:layout_toEndOf="@+id/quote"
+        android:layout_toRightOf="@+id/quote" />
 
 </RelativeLayout>
