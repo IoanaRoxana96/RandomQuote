@@ -20,6 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Integer n_of_occ = 0;
 
 
+
     public DatabaseHelper (Context context) {
         super(context, DATABASE_NAME, null, 13);
         //context.deleteDatabase("Quotes.db");

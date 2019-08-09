@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Cursor res1 = myDb.getTop();
                         if(res1.getCount() == 0) {
-                            showMessage("Error", "Nothing found");
+                            showMessage("Error!!!", "Nothing found!");
                             return;
                         }
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                             buffer.append("Quote: " + res1.getString(1) + "\n");
                             buffer.append("N_of_occ: " + res1.getString(2) + "\n\n");
                         }
-                        showMessage("Top random quotes", buffer.toString());
+                        showMessage("Top random quotes:", buffer.toString());
                     }
                 }
         );
@@ -74,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Integer deleteRows = myDb.deleteQuote(editQuoteId.getText().toString());
                         if(deleteRows > 0)
-                            Toast.makeText(MainActivity.this, "Quote deleted", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Quote deleted!", Toast.LENGTH_LONG).show();
                         else
-                            Toast.makeText(MainActivity.this, "Quote not deleted", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Quote already deleted or id doesn't exist!", Toast.LENGTH_LONG).show();
                     }
                 }
         );
@@ -110,11 +110,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         boolean quoteExists = myDb.checkQuote(editQuote.getText().toString());
                         if (quoteExists == true) {
-                            Toast.makeText(getBaseContext(), "Quote already exist. Please add another one", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "Quote already exist! Please add another one.", Toast.LENGTH_LONG).show();
                         } else {
                                 myDb.insertQuote(editQuote.getText().toString());
                                 myDb.insertQuote2(editQuote.getText().toString());
-                                Toast.makeText(getBaseContext(), "Quote inserted", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getBaseContext(), "Quote inserted!", Toast.LENGTH_LONG).show();
 
                         }
                         editQuote.setText("");
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Cursor res = myDb.getAllQuotes();
                         if(res.getCount() == 0) {
-                            showMessage("Error", "Nothing found");
+                            showMessage("Error!!!", "Nothing found!");
                             return;
                         }
 
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                             buffer.append("Quote: " + res.getString(1) + "\n\n");
                             //buffer.append("N: " + res1.getString(2));
                         }
-                        showMessage("Quotes", buffer.toString());
+                        showMessage("Quotes:", buffer.toString());
                     }
                 }
         );
