@@ -56,11 +56,11 @@ public class MainActivity extends AppCompatActivity {
 
                         StringBuffer buffer = new StringBuffer();
                         while (res1.moveToNext()) {
-                            buffer.append("Quote: " + res1.getString(0) + "\n");
-                            buffer.append("N_of_occ: " + res1.getString(1) + "\n\n");
+                            buffer.append("Id: " + res1.getString(0) + "\n");
+                            buffer.append("Quote: " + res1.getString(1) + "\n");
+                            buffer.append("N_of_occ: " + res1.getString(2) + "\n\n");
                         }
                         showMessage("Top random quotes", buffer.toString());
-
                     }
                 }
         );
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String stringForQuote;
+                        String stringForQuote = null;
                         TextView rQuote = (TextView) findViewById(R.id.randomQuote);
                         Cursor res = myDb.getRandomQuote();
                         StringBuffer buffer = new StringBuffer();
@@ -96,9 +96,8 @@ public class MainActivity extends AppCompatActivity {
                             //buffer.append("Quote: " + res.getString(1) + "\n\n");
                             stringForQuote = res.getString(1);
                             rQuote.setText(stringForQuote);
-                            myDb.insertQuote2(stringForQuote);
+                            myDb.checkRandom(stringForQuote);
                         }
-                       // showMessage("Quotes", buffer.toString());
                     }
                 }
         );
@@ -114,15 +113,14 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(getBaseContext(), "Quote already exist. Please add another one", Toast.LENGTH_LONG).show();
                         } else {
                                 myDb.insertQuote(editQuote.getText().toString());
+                                myDb.insertQuote2(editQuote.getText().toString());
                                 Toast.makeText(getBaseContext(), "Quote inserted", Toast.LENGTH_LONG).show();
 
                         }
                         editQuote.setText("");
-
                     }
                 }
         );
-
     }
 
 

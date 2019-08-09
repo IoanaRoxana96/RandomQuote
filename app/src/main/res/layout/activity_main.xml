@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="@+id/quote"
         android:layout_marginStart="187dp"
+        android:hint="Insert quote"
         android:layout_marginLeft="187dp"
         android:layout_toEndOf="@+id/quote"
         android:layout_toRightOf="@+id/quote" />
@@ -113,6 +114,7 @@
         android:layout_marginStart="18dp"
         android:layout_marginLeft="18dp"
         android:layout_marginTop="-13dp"
+        android:hint="Insert the id for quote you want to delete"
         android:layout_toEndOf="@+id/quote"
         android:layout_toRightOf="@+id/quote" />
 

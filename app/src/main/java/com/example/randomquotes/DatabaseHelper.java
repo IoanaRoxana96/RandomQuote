@@ -15,10 +15,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_2 = "QUOTE";
     public static final String COL_12 = "ID2";
     public static final String COL_22 = "QUOTE2";
+    public static final String COL_32 = "N_OF_OCC";
+
+    //Integer n_of_occ = 0;
 
 
     public DatabaseHelper (Context context) {
-        super(context, DATABASE_NAME, null, 10);
+        super(context, DATABASE_NAME, null, 13);
         //context.deleteDatabase("Quotes.db");
         SQLiteDatabase db = this.getWritableDatabase();
     }
@@ -26,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate (SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT," +  COL_2  + " TEXT NOT NULL);");
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 + " (" + COL_12 + " INTEGER PRIMARY KEY AUTOINCREMENT, "+  COL_22  + " TEXT NOT NULL);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 + " (" + COL_12 + " INTEGER PRIMARY KEY AUTOINCREMENT, "+  COL_22  + " TEXT NOT NULL," + COL_32 + " INTEGER);");
         //db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
@@ -58,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_22, quote);
+        contentValues.put(COL_32, 0);
         //db.beginTransaction();
         long result = db.insert(TABLE_NAME2, null, contentValues);
         //db.setTransactionSuccessful();
@@ -77,6 +81,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+
+    /*public boolean checkRandom (String quote) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ContentValues contentValues = new ContentValues();
+        Cursor cursor = db.rawQuery("SELECT QUOTE2 FROM " + TABLE_NAME2 + " WHERE QUOTE2 = ? " , new String[]{quote});
+        if (cursor.getCount() > 0) {
+            n_of_occ++;
+                do {
+                    //contentValues.put(COL_22, quote);
+                    contentValues.put(COL_32, n_of_occ);
+                    db.update(TABLE_NAME2, contentValues, " QUOTE2 = ?", new String[]{quote});
+
+                } while (cursor.moveToNext());
+            return true;
+        }
+        return false;
+    }*/
+
+    public boolean checkRandom(String quote) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(" UPDATE " + TABLE_NAME2 + " SET " + COL_32 + " = N_OF_OCC + 1 " + " WHERE QUOTE2 = ? " , new String[]{quote});
+        if (cursor.getCount() > 0 )
+            return true;
+        return false;
+    }
+
+
+
     public Cursor getAllQuotes() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("SELECT " + COL_1 + ", " +  COL_2  + " FROM " + TABLE_NAME, null);
@@ -87,8 +119,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getTop() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res1 = db.rawQuery("SELECT " + COL_22 + ", COUNT (*) AS N_Of_Occ FROM " + TABLE_NAME2 + " GROUP BY " + COL_22 + " ORDER BY N_Of_Occ  DESC ", null);
-        //Cursor res1 = db.rawQuery("SELECT " + COL_12 + ", " + COL_22 + " FROM " + TABLE_NAME2, null);
+        //Cursor res1 = db.rawQuery("SELECT " + COL_22 + ", COUNT (*) AS N_Of_Occ FROM " + TABLE_NAME2 + " GROUP BY " + COL_22 + " ORDER BY N_Of_Occ  DESC ", null);
+        Cursor res1 = db.rawQuery("SELECT * FROM " + TABLE_NAME2, null);
         return res1;
     }
 
