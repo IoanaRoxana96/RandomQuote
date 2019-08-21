@@ -1,8 +1,11 @@
 package com.example.randomquotes;
 
 
+import android.app.ProgressDialog;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,7 +15,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
+
+
+
     DatabaseHelper myDb;
     EditText editQuote, editQuoteId;
     Button addQuote;
@@ -20,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     Button viewAllQuotes;
     Button randomQuote;
     Button topQuote;
+    Button requestButton;
+    TextView showOutput;
+    ProgressDialog pd;
 
 
     @Override
@@ -35,12 +52,80 @@ public class MainActivity extends AppCompatActivity {
         viewAllQuotes = (Button) findViewById (R.id.button_view);
         randomQuote = (Button) findViewById (R.id.button_random);
         topQuote = (Button) findViewById(R.id.button_top);
+        requestButton = (Button) findViewById(R.id.request_button);
+        showOutput = (TextView)findViewById(R.id.showOutput);
        // TextView rQuote = (TextView) findViewById(R.id.randomQuote);
+
         AddQuote();
         DeleteQuote();
         ViewAllQuotes();
         RandomQuote();
         TopQuotes();
+        //Request();
+
+        requestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new JSONTask().execute("http://quotes.rest/qod.json");
+            }
+        });
+
+    }
+
+    public class JSONTask extends AsyncTask<String, String, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
+            try {
+                Log.d("Verificare", "Intru in doInBackground");
+
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+
+                String line = "";
+
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+
+                }
+                return buffer.toString();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            showOutput.setText(result);
+        }
     }
 
     public void TopQuotes() {
@@ -61,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                             buffer.append("N_of_occ: " + res1.getString(2) + "\n\n");
                         }
                         showMessage("Top random quotes:", buffer.toString());
+
                     }
                 }
         );
@@ -156,3 +242,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+

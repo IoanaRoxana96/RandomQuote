@@ -118,4 +118,30 @@
         android:layout_toEndOf="@+id/quote"
         android:layout_toRightOf="@+id/quote" />
 
+
+        <Button
+            android:id="@+id/request_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="330dp"
+            android:text="Request page" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView"
+        android:layout_below="@+id/request_button"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Response ....."
+            android:id="@+id/showOutput"
+            android:layout_alignEnd="@+id/scrollView"
+            android:layout_alignRight="@+id/scrollView" />
+
+    </ScrollView>
+
+
 </RelativeLayout>
