@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public DatabaseHelper (Context context) {
-        super(context, DATABASE_NAME, null, 13);
+        super(context, DATABASE_NAME, null, 15);
         //context.deleteDatabase("Quotes.db");
         SQLiteDatabase db = this.getWritableDatabase();
     }

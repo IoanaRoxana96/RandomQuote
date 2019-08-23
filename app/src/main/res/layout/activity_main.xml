@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="210dp"
         android:layout_marginLeft="240dp"
-        android:textSize="30dp"/>
+        android:textSize="15dp"/>
 
     <EditText
         android:id="@+id/editQuoteId"
