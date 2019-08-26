@@ -2,7 +2,10 @@ package com.example.randomquotes;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         Button requestButton;
         TextView showOutput;
         ProgressDialog pd;
+        
 
 
         @Override
@@ -135,18 +139,27 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
         super.onPostExecute(result);
         showOutput.setText(result);
-                if (myDb.checkQuote(showOutput.getText().toString()) == true) {
-                        Toast.makeText(getBaseContext(), "Quote already exist! Please add another one.", Toast.LENGTH_LONG).show();
-                } else {
-                        myDb.insertQuote(showOutput.getText().toString());
-                        myDb.insertQuote2(showOutput.getText().toString());
-                        Toast.makeText(getBaseContext(), "Quote inserted!", Toast.LENGTH_LONG).show();
+                if (isNetworkAvailable() == true) {
+                        if (myDb.checkQuote(showOutput.getText().toString()) == true) {
+                                Toast.makeText(getBaseContext(), "Quote already exist! Please add another one.", Toast.LENGTH_LONG).show();
+                        } else {
+                                myDb.insertQuote(showOutput.getText().toString());
+                                myDb.insertQuote2(showOutput.getText().toString());
+                                Toast.makeText(getBaseContext(), "Quote inserted!", Toast.LENGTH_LONG).show();
 
+                        }
+                } else {
+                        Toast.makeText(getBaseContext(), "No internet connection! Please connect if you want to see the quote of the day!", Toast.LENGTH_SHORT).show();
                 }
 
                 }
         }
 
+        private boolean isNetworkAvailable() {
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
         public void TopQuotes() {
                 topQuote.setOnClickListener(
                         new View.OnClickListener() {
