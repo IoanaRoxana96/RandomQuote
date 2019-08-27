@@ -1,7 +1,6 @@
 package com.example.randomquotes;
 
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -11,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         Button topQuote;
         Button requestButton;
         TextView showOutput;
-        ProgressDialog pd;
-        
+        ProgressBar progressBar;
+        TextView percentage;
 
 
         @Override
@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 topQuote = (Button) findViewById(R.id.button_top);
                 requestButton = (Button) findViewById(R.id.request_button);
                 showOutput = (TextView)findViewById(R.id.showOutput);
+                progressBar = (ProgressBar)findViewById(R.id.progressBar);
+                percentage = (TextView)findViewById(R.id.percentage) ;
 
                 AddQuote();
                 DeleteQuote();
@@ -75,69 +77,102 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public class JSONTask extends AsyncTask<String, String, String> {
 
+
+        public class JSONTask extends AsyncTask<String, Integer, String> {
+
+                @Override
+                protected void onPreExecute() {
+
+                        super.onPreExecute();
+                        Toast.makeText(getApplicationContext(), "Starting...", Toast.LENGTH_SHORT).show();
+
+                };
 
                 @Override
                 protected String doInBackground(String... params) {
+
                         HttpURLConnection connection = null;
                         BufferedReader reader = null;
 
-                        try {
-                                //Log.d("Verificare", "Intru in doInBackground");
-
-                                URL url = new URL(params[0]);
-                                connection = (HttpURLConnection) url.openConnection();
-                                connection.connect();
-
-                                InputStream stream = connection.getInputStream();
-
-                                reader = new BufferedReader(new InputStreamReader(stream));
-                                StringBuffer buffer = new StringBuffer();
-                                String line = "";
-
-                                while ((line = reader.readLine()) != null) {
-                                        buffer.append(line);
-                                }
-
-                                String finalJson = buffer.toString();
-                                JSONObject parentObject = new JSONObject(finalJson);
-                                JSONObject object = parentObject.getJSONObject("contents");
-
-                                JSONArray parentArray = object.getJSONArray("quotes");
-                                JSONObject finalObject = parentArray.getJSONObject(0);
-
-                                String dailyQuote = finalObject.getString("quote");
-                                return dailyQuote;
-
-                                //return buffer.toString();
-
-
-                        } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                        } catch (IOException e) {
-                                e.printStackTrace();
-                        } catch (JSONException e) {
-                                e.printStackTrace();
-                        } finally {
-                                if (connection != null) {
-                                        connection.disconnect();
-                                }
+                        for (int i = 0; i <= 100; i++) {
                                 try {
-                                        if (reader != null) {
-
-                                                reader.close();
-                                        }
-                                } catch (IOException e) {
+                                        Thread.sleep(10);
+                                } catch (InterruptedException e) {
                                         e.printStackTrace();
                                 }
+                                publishProgress(i);
+
                         }
-                        return null;
+                                try {
+
+                                        //Log.d("Verificare", "Intru in doInBackground");
+
+                                        URL url = new URL(params[0]);
+                                        connection = (HttpURLConnection) url.openConnection();
+                                        connection.connect();
+
+                                        InputStream stream = connection.getInputStream();
+
+                                        reader = new BufferedReader(new InputStreamReader(stream));
+                                        StringBuffer buffer = new StringBuffer();
+                                        String line = "";
+
+                                        while ((line = reader.readLine()) != null) {
+                                                buffer.append(line);
+                                        }
+
+                                        String finalJson = buffer.toString();
+                                        JSONObject parentObject = new JSONObject(finalJson);
+                                        JSONObject object = parentObject.getJSONObject("contents");
+
+                                        JSONArray parentArray = object.getJSONArray("quotes");
+                                        JSONObject finalObject = parentArray.getJSONObject(0);
+
+                                        String dailyQuote = finalObject.getString("quote");
+
+                                        return dailyQuote;
+
+                                        //return buffer.toString();
+
+
+                                } catch (MalformedURLException e) {
+                                        e.printStackTrace();
+                                } catch (IOException e) {
+                                        e.printStackTrace();
+                                } catch (JSONException e) {
+                                        e.printStackTrace();
+                                } finally {
+                                        if (connection != null) {
+                                                connection.disconnect();
+                                        }
+                                        try {
+                                                if (reader != null) {
+
+                                                        reader.close();
+                                                }
+                                        } catch (IOException e) {
+                                                e.printStackTrace();
+                                        }
+                                }
+                                return null;
+
                 }
+
+                @Override
+                protected void onProgressUpdate(Integer... values) {
+                        super.onProgressUpdate(values);;
+                        progressBar.setProgress(values[0]);
+                        percentage.setText(String.valueOf(values[0]) + " %");
+                }
+
 
         @Override
         protected void onPostExecute(String result) {
         super.onPostExecute(result);
+        Toast.makeText(getApplicationContext(), "Completed", Toast.LENGTH_SHORT).show();
+
+                //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
         showOutput.setText(result);
                 if (isNetworkAvailable() == true) {
                         if (myDb.checkQuote(showOutput.getText().toString()) == true) {
@@ -151,8 +186,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                         Toast.makeText(getBaseContext(), "No internet connection! Please connect if you want to see the quote of the day!", Toast.LENGTH_SHORT).show();
                 }
-
                 }
+
         }
 
         private boolean isNetworkAvailable() {
