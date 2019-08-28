@@ -146,6 +146,7 @@
         android:max="100"
         android:minWidth="250dp"
         android:minHeight="50dp"
+        android:color="#0b03fc"
         android:layout_marginTop="430dp"
         android:layout_marginRight="50dp"
         android:layout_marginLeft="50dp"
@@ -169,7 +170,7 @@
             android:layout_marginTop="100dp"
             android:layout_marginRight="20dp"
             android:text="Response ....."
-            android:textSize="20dp" />
+            android:textSize="18dp" />
 
 
     </ScrollView>
