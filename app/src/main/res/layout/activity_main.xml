@@ -129,28 +129,6 @@
         android:layout_marginTop="330dp"
         android:text="Request page" />
 
-    <TextView
-        android:id="@+id/percentage"
-        android:layout_marginTop="390dp"
-        android:textSize="30dp"
-        android:layout_marginLeft="280dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:max="100"
-        android:minWidth="250dp"
-        android:minHeight="50dp"
-        android:color="#0b03fc"
-        android:layout_marginTop="430dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginLeft="50dp"
-        android:progress="1" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -167,7 +145,7 @@
             android:layout_alignEnd="@+id/scrollView"
             android:layout_alignRight="@+id/scrollView"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="20dp"
             android:text="Response ....."
             android:textSize="18dp" />

@@ -1,16 +1,16 @@
 package com.example.randomquotes;
 
-
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,9 +25,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,8 +40,14 @@ public class MainActivity extends AppCompatActivity {
     Button topQuote;
     Button requestButton;
     TextView showOutput;
-    ProgressBar progressBar;
-    TextView percentage;
+    ProgressDialog progressDialog;
+    //ProgressBar progressBar;
+    //TextView percentage;
+    //private int progressStatus = 0;
+    //private Handler handler = new Handler();
+
+
+    private static String file_url = "http://quotes.rest/qod.json";
 
 
     @Override
@@ -58,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
         topQuote = (Button) findViewById(R.id.button_top);
         requestButton = (Button) findViewById(R.id.request_button);
         showOutput = (TextView) findViewById(R.id.showOutput);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        percentage = (TextView) findViewById(R.id.percentage);
+        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        //percentage = (TextView) findViewById(R.id.percentage);
+
 
         AddQuote();
         DeleteQuote();
@@ -67,11 +74,13 @@ public class MainActivity extends AppCompatActivity {
         RandomQuote();
         TopQuotes();
 
-
+        progressDialog = new ProgressDialog(this);
         requestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new JSONTask().execute("http://quotes.rest/qod.json");
+                new JSONTask().execute(file_url);
+
+
             }
         });
 
@@ -188,53 +197,76 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+
     public class JSONTask extends AsyncTask<String, Integer, String> {
+        BufferedReader reader = null;
+        String resultJson;
 
         @Override
         protected void onPreExecute() {
-
             super.onPreExecute();
-            Toast.makeText(getApplicationContext(), "Starting...", Toast.LENGTH_SHORT).show();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setTitle("Progress bar");
+            progressDialog.setMessage("Getting quote of the day...");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setProgress(0);
+            progressDialog.setMax(100);
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(false);
+            progressDialog.show();
+            //progressBar.setProgress(0);
 
         }
 
-        ;
 
         @Override
         protected String doInBackground(String... params) {
-
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-
-            for (int i = 0; i <= 100; i++) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                publishProgress(i);
-
-            }
+            int count;
+            publishProgress(0);
             try {
 
                 //Log.d("Verificare", "Intru in doInBackground");
 
                 URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
+                //HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                URLConnection connection = url.openConnection();
+                //connection.setDoInput(true);
+                //connection.connect();
 
-                InputStream stream = connection.getInputStream();
+                int lengthOfFile = connection.toString().length();
+                Log.d("Verificare", "Lungime content   " + lengthOfFile);
 
-                reader = new BufferedReader(new InputStreamReader(stream));
+                InputStream input = url.openStream();
+
+                /*int status = connection.getResponseCode();
+                if (status != HttpURLConnection.HTTP_OK)
+                    input = connection.getErrorStream();
+                else
+                    input = connection.getInputStream();*/
+
+                byte data[] = new byte[1024];
+                long total = 0;
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    publishProgress((int) ((total * 100) / lengthOfFile));
+                    // output.write(data, 0, count);
+                }
+                //output.flush();
+                //output.close();
+                input.close();
+
                 StringBuffer buffer = new StringBuffer();
                 String line = "";
-
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
+                reader.close();
 
-                String finalJson = buffer.toString();
-                JSONObject parentObject = new JSONObject(finalJson);
+                //return resultJson;
+
+                resultJson = buffer.toString();
+                JSONObject parentObject = new JSONObject(resultJson);
                 JSONObject object = parentObject.getJSONObject("contents");
 
                 JSONArray parentArray = object.getJSONArray("quotes");
@@ -242,21 +274,29 @@ public class MainActivity extends AppCompatActivity {
 
                 String dailyQuote = finalObject.getString("quote");
 
-                return dailyQuote;
+                //return dailyQuote;
 
-                //return buffer.toString();
+
+
+
+                //OutputStream output = connection.getOutputStream();
+
+                return dailyQuote;
+                //return resultJson;
 
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                System.err.println("Malformed URL encountered: " + e.getMessage());
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (JSONException e) {
+                System.err.println("An IOException was caught: " + e.getMessage());
+            }  catch (JSONException e) {
                 e.printStackTrace();
             } finally {
-                if (connection != null) {
+                /*if (connection != null) {
                     connection.disconnect();
-                }
+                }*/
                 try {
                     if (reader != null) {
 
@@ -264,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    System.err.println("An IOException was caught: " + e.getMessage());
                 }
             }
             return null;
@@ -271,19 +312,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            ;
-            progressBar.setProgress(values[0]);
-            percentage.setText(String.valueOf(values[0]) + " %");
+        protected void onProgressUpdate(Integer... progress) {
+            super.onProgressUpdate(progress);
+            progressDialog.setProgress(progress[0]);
+
         }
 
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            //Toast.makeText(getApplicationContext(), "Completed", Toast.LENGTH_SHORT).show();
-            //Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
             showOutput.setText(result);
             if (isNetworkAvailable() == true) {
                 if (myDb.checkQuote(showOutput.getText().toString()) == true) {
