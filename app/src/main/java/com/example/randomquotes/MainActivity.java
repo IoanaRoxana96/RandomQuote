@@ -251,6 +251,8 @@ public class MainActivity extends AppCompatActivity {
                     publishProgress((int) ((total * 100) / lengthOfFile));
                     // output.write(data, 0, count);
                 }
+
+
                 //output.flush();
                 //output.close();
                 input.close();
@@ -274,14 +276,14 @@ public class MainActivity extends AppCompatActivity {
 
                 String dailyQuote = finalObject.getString("quote");
 
-                //return dailyQuote;
+                /*JSONObject error = parentObject.getJSONObject("error");
+                String errorCode = error.getString("code");
+                String errorMessage = error.getString("message");
 
-
-
-
-                //OutputStream output = connection.getOutputStream();
+                return dailyQuote + errorCode + errorMessage;*/
 
                 return dailyQuote;
+
                 //return resultJson;
 
 
@@ -325,13 +327,17 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.dismiss();
             showOutput.setText(result);
             if (isNetworkAvailable() == true) {
-                if (myDb.checkQuote(showOutput.getText().toString()) == true) {
-                    Toast.makeText(getBaseContext(),"Completed." + "\n" + "Quote already exist! Please add another one.", Toast.LENGTH_LONG).show();
+                if (result == null) {
+                    Toast.makeText(MainActivity.this, "Too many requests for this page. Please wait 1 hour before send a new request! ", Toast.LENGTH_LONG).show();
                 } else {
-                    myDb.insertQuote(showOutput.getText().toString());
-                    myDb.insertQuote2(showOutput.getText().toString());
-                    Toast.makeText(getBaseContext(),"Completed." + "\n" + "Quote inserted!", Toast.LENGTH_LONG).show();
+                    if (myDb.checkQuote(showOutput.getText().toString()) == true) {
+                        Toast.makeText(getBaseContext(), "Completed." + "\n" + "Quote already exist! Please add another one.", Toast.LENGTH_LONG).show();
+                    } else {
+                        myDb.insertQuote(showOutput.getText().toString());
+                        myDb.insertQuote2(showOutput.getText().toString());
+                        Toast.makeText(getBaseContext(), "Completed." + "\n" + "Quote inserted!", Toast.LENGTH_LONG).show();
 
+                    }
                 }
             } else {
                 Toast.makeText(getBaseContext(),"No internet connection! Please connect if you want to see the quote of the day!", Toast.LENGTH_SHORT).show();
