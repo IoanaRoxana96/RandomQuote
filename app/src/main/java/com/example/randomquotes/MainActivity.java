@@ -2,6 +2,7 @@ package com.example.randomquotes;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -326,12 +327,23 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
             progressDialog.dismiss();
             showOutput.setText(result);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("Warning");
+            alertDialog.setMessage("Too many requests for this page. Please wait 1 hour before send a new request! ");
             if (isNetworkAvailable() == true) {
                 if (result == null) {
-                    Toast.makeText(MainActivity.this, "Too many requests for this page. Please wait 1 hour before send a new request! ", Toast.LENGTH_LONG).show();
+                    alertDialog.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    alertDialog.show();
+                    //Toast.makeText(MainActivity.this, "Too many requests for this page. Please wait 1 hour before send a new request! ", Toast.LENGTH_LONG).show();
                 } else {
                     if (myDb.checkQuote(showOutput.getText().toString()) == true) {
-                        Toast.makeText(getBaseContext(), "Completed." + "\n" + "Quote already exist! Please add another one.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), "Completed." + "\n" + "Quote already exist in the database! Add another one tomorrow.", Toast.LENGTH_LONG).show();
                     } else {
                         myDb.insertQuote(showOutput.getText().toString());
                         myDb.insertQuote2(showOutput.getText().toString());
