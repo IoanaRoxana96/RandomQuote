@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+
 public class DatabaseHelper extends SQLiteOpenHelper {
+
     public static final String DATABASE_NAME = "Quotes.db";
     public static final String TABLE_NAME = "quotes_table";
     public static final String TABLE_NAME2 = "quotes_table2";
@@ -17,15 +19,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_22 = "QUOTE2";
     public static final String COL_32 = "N_OF_OCC";
 
+
+
     //Integer n_of_occ = 0;
 
 
 
     public DatabaseHelper (Context context) {
-        super(context, DATABASE_NAME, null, 15);
+        super(context, DATABASE_NAME, null, 18);
         //context.deleteDatabase("Quotes.db");
-        SQLiteDatabase db = this.getWritableDatabase();
+        //SQLiteDatabase db = this.getWritableDatabase();
     }
+
+
 
     @Override
     public void onCreate (SQLiteDatabase db) {
@@ -44,9 +50,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /*public void onConfigure(SQLiteDatabase db) {
+        db.execSQL("PRAGMA key = 'secretkey'");
+    }*/
 
     public boolean insertQuote(String quote) {
         SQLiteDatabase db = this.getWritableDatabase();
+        //SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, quote);
         long result = db.insert(TABLE_NAME, null, contentValues);
@@ -56,6 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
 
     }
+
 
 
     public boolean insertQuote2(String quote) {
@@ -138,8 +149,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "ID = ?", new String[] {id});
     }
-
-
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.randomquotes;
 
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +8,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,6 +32,14 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,14 +58,16 @@ public class MainActivity extends AppCompatActivity {
     //private int progressStatus = 0;
     //private Handler handler = new Handler();
 
-
     private static String file_url = "http://quotes.rest/qod.json";
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         myDb = new DatabaseHelper(this);
         editQuote = (EditText) findViewById(R.id.editQuote);
         editQuoteId = (EditText) findViewById(R.id.editQuoteId);
@@ -81,11 +94,78 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new JSONTask().execute(file_url);
 
-
+               // readFile("data/data/com.example.randomquotes/databases/Quotes.db");
             }
         });
 
+
+            String file = "/data/data/com.example.randomquotes/databases/Quotes.db";
+            String destFile = "/data/data/com.example.randomquotes/databases/NewTextFile.txt";
+            String mode = "encrypt";
+            String password = "password";
+
+    /*String file = args[0];
+    String destFile = args[1];
+    String mode = args[2];
+    String password = args[3];*/
+
+
+        byte[] fileBytes = new byte[0];
+        try {
+            fileBytes = NullbeansFileManager.readFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] resultBytes = null;
+            if (mode.equalsIgnoreCase("encrypt")) {
+                try {
+                    resultBytes = AESEncryptionManager.encryptData(password, fileBytes);
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (InvalidAlgorithmParameterException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    e.printStackTrace();
+                }
+                Log.d("Verificare", " " + resultBytes.length);
+            } else {
+                try {
+                    resultBytes = AESEncryptionManager.decryptData(password, fileBytes);
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (InvalidAlgorithmParameterException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    e.printStackTrace();
+                }
+            }
+        try {
+            NullbeansFileManager.writeFile(destFile, resultBytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
+
+
+
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -357,6 +437,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
 
 }
 
