@@ -129,6 +129,30 @@
         android:layout_marginTop="330dp"
         android:text="Request page" />
 
+    <Button
+        android:id="@+id/initialchecksum_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="215dp"
+        android:text="Generate initial checksum"/>
+
+    <Button
+        android:id="@+id/checksum_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="265dp"
+        android:text="Generate new checksum"/>
+
+    <Button
+        android:id="@+id/verify_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="330dp"
+        android:text="Check integrity" />
+
 
     <ScrollView
         android:id="@+id/scrollView"

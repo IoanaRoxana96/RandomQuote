@@ -21,12 +21,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    //Integer n_of_occ = 0;
 
 
 
     public DatabaseHelper (Context context) {
-        super(context, DATABASE_NAME, null, 18);
+        super(context, DATABASE_NAME, null, 21);
         //context.deleteDatabase("Quotes.db");
         //SQLiteDatabase db = this.getWritableDatabase();
     }
@@ -37,26 +36,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate (SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT," +  COL_2  + " TEXT NOT NULL);");
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 + " (" + COL_12 + " INTEGER PRIMARY KEY AUTOINCREMENT, "+  COL_22  + " TEXT NOT NULL," + COL_32 + " INTEGER);");
-        //db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
     @Override
     public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion) {
-        //Log.i( " ","Upgrade database" + newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        //db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 + " (" + COL_12 + " INTEGER PRIMARY KEY AUTOINCREMENT, "+  COL_22  + " TEXT NOT NULL);");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME2);
 
         onCreate(db);
     }
 
-    /*public void onConfigure(SQLiteDatabase db) {
-        db.execSQL("PRAGMA key = 'secretkey'");
-    }*/
+
 
     public boolean insertQuote(String quote) {
         SQLiteDatabase db = this.getWritableDatabase();
-        //SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, quote);
         long result = db.insert(TABLE_NAME, null, contentValues);
@@ -74,10 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_22, quote);
         contentValues.put(COL_32, 0);
-        //db.beginTransaction();
         long result = db.insert(TABLE_NAME2, null, contentValues);
-        //db.setTransactionSuccessful();
-        //db.endTransaction();
         if(result == -1)
             return false;
         else
@@ -94,22 +84,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    /*public boolean checkRandom (String quote) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        ContentValues contentValues = new ContentValues();
-        Cursor cursor = db.rawQuery("SELECT QUOTE2 FROM " + TABLE_NAME2 + " WHERE QUOTE2 = ? " , new String[]{quote});
-        if (cursor.getCount() > 0) {
-            n_of_occ++;
-                do {
-                    //contentValues.put(COL_22, quote);
-                    contentValues.put(COL_32, n_of_occ);
-                    db.update(TABLE_NAME2, contentValues, " QUOTE2 = ?", new String[]{quote});
-
-                } while (cursor.moveToNext());
-            return true;
-        }
-        return false;
-    }*/
 
     public boolean checkRandom(String quote) {
         SQLiteDatabase db = this.getWritableDatabase();

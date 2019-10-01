@@ -26,20 +26,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,14 +47,19 @@ public class MainActivity extends AppCompatActivity {
     Button randomQuote;
     Button topQuote;
     Button requestButton;
+    Button checkButton;
+    Button createCheckSum;
+    Button createInitialCheckSum;
     TextView showOutput;
     ProgressDialog progressDialog;
-    //ProgressBar progressBar;
-    //TextView percentage;
-    //private int progressStatus = 0;
-    //private Handler handler = new Handler();
+    String filePath = "/data/data/com.example.randomquotes/databases/Quotes.db";
+    String OriginalHex = null;
+    String NewHex = null;
+
+
 
     private static String file_url = "http://quotes.rest/qod.json";
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -77,16 +78,21 @@ public class MainActivity extends AppCompatActivity {
         randomQuote = (Button) findViewById(R.id.button_random);
         topQuote = (Button) findViewById(R.id.button_top);
         requestButton = (Button) findViewById(R.id.request_button);
+        checkButton = (Button) findViewById(R.id.verify_button);
+        createCheckSum = (Button) findViewById(R.id.checksum_button);
+        createInitialCheckSum = (Button) findViewById(R.id.initialchecksum_button);
         showOutput = (TextView) findViewById(R.id.showOutput);
-        //progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        //percentage = (TextView) findViewById(R.id.percentage);
 
 
-        AddQuote();
-        DeleteQuote();
-        ViewAllQuotes();
-        RandomQuote();
-        TopQuotes();
+
+        addQuoteToDB();
+        deleteQuoteFromDB();
+        viewAllQuotesFromDB();
+        randomQuote();
+        topQuotes();
+        check();
+        createInitialCheckSum();
+        createNewCheckSum();
 
         progressDialog = new ProgressDialog(this);
         requestButton.setOnClickListener(new View.OnClickListener() {
@@ -94,77 +100,85 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new JSONTask().execute(file_url);
 
-               // readFile("data/data/com.example.randomquotes/databases/Quotes.db");
             }
         });
 
 
-            String file = "/data/data/com.example.randomquotes/databases/Quotes.db";
-            String destFile = "/data/data/com.example.randomquotes/databases/NewTextFile.txt";
-            String mode = "encrypt";
-            String password = "password";
+    }
 
-    /*String file = args[0];
-    String destFile = args[1];
-    String mode = args[2];
-    String password = args[3];*/
+    public void createInitialCheckSum() {
+        createInitialCheckSum.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MessageDigest md = null;
+                        try {
+                            md = MessageDigest.getInstance("SHA-256");
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        }
+                        OriginalHex = checksum (filePath, md);
+                        Toast.makeText(MainActivity.this, "Initial checksum generated", Toast.LENGTH_SHORT).show();
+                        Log.d("Valoare hex initial", OriginalHex);
+                    }
+                }
+        );
+    }
 
+    public void createNewCheckSum() {
+        createCheckSum.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MessageDigest md = null;
+                        try {
+                            md = MessageDigest.getInstance("SHA-256");
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        }
+                        NewHex = checksum (filePath, md);
+                        Toast.makeText(MainActivity.this, "New checksum generated", Toast.LENGTH_SHORT).show();
+                        Log.d("Valoare hex nou", NewHex);
+                    }
+                }
+        );
+    }
 
-        byte[] fileBytes = new byte[0];
+    private static String checksum(String filepath, MessageDigest md) {
         try {
-            fileBytes = NullbeansFileManager.readFile(file);
+            DigestInputStream dis = new DigestInputStream(new FileInputStream(filepath), md);
+            while (dis.read() != -1)
+                md = dis.getMessageDigest();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        byte[] resultBytes = null;
-            if (mode.equalsIgnoreCase("encrypt")) {
-                try {
-                    resultBytes = AESEncryptionManager.encryptData(password, fileBytes);
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (InvalidAlgorithmParameterException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeyException e) {
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeySpecException e) {
-                    e.printStackTrace();
-                }
-                Log.d("Verificare", " " + resultBytes.length);
-            } else {
-                try {
-                    resultBytes = AESEncryptionManager.decryptData(password, fileBytes);
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (InvalidAlgorithmParameterException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeyException e) {
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeySpecException e) {
-                    e.printStackTrace();
-                }
-            }
-        try {
-            NullbeansFileManager.writeFile(destFile, resultBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
+        StringBuilder result = new StringBuilder();
+        for (byte b : md.digest()) {
+            result.append(String.format("%02x", b));
         }
+        return result.toString();
 
 
     }
 
+    public void check() {
+        checkButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onClick(View view) {
+                        if (OriginalHex.equals(NewHex) )
+                            Toast.makeText(MainActivity.this, "Database is not corrupted", Toast.LENGTH_SHORT).show();
+                         else
+                            Toast.makeText(MainActivity.this, "Database corrupted", Toast.LENGTH_SHORT).show();
+                        Log.d("Verificare hex original", OriginalHex);
+                        Log.d("Verificare hex nou", NewHex);
 
+
+                    }
+                    }
+        );
+    }
 
 
     private boolean isNetworkAvailable() {
@@ -173,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void TopQuotes() {
+    public void topQuotes() {
         topQuote.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -195,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void DeleteQuote() {
+    public void deleteQuoteFromDB() {
         deleteQuote.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -209,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void RandomQuote() {
+    public void randomQuote() {
 
         randomQuote.setOnClickListener(
                 new View.OnClickListener() {
@@ -229,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void AddQuote() {
+    public void addQuoteToDB() {
         addQuote.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -248,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void ViewAllQuotes() {
+    public void viewAllQuotesFromDB() {
         viewAllQuotes.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -263,7 +277,6 @@ public class MainActivity extends AppCompatActivity {
                         while (res.moveToNext()) {
                             buffer.append("Id: " + res.getString(0) + "\n");
                             buffer.append("Quote: " + res.getString(1) + "\n\n");
-                            //buffer.append("N: " + res1.getString(2));
                         }
                         showMessage("Quotes:", buffer.toString());
                     }
@@ -309,33 +322,22 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("Verificare", "Intru in doInBackground");
 
                 URL url = new URL(params[0]);
-                //HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 URLConnection connection = url.openConnection();
-                //connection.setDoInput(true);
-                //connection.connect();
 
                 int lengthOfFile = connection.toString().length();
-                Log.d("Verificare", "Lungime content   " + lengthOfFile);
+                //Log.d("Verificare", "Lungime content   " + lengthOfFile);
 
                 InputStream input = url.openStream();
 
-                /*int status = connection.getResponseCode();
-                if (status != HttpURLConnection.HTTP_OK)
-                    input = connection.getErrorStream();
-                else
-                    input = connection.getInputStream();*/
 
                 byte data[] = new byte[1024];
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
                     total += count;
                     publishProgress((int) ((total * 100) / lengthOfFile));
-                    // output.write(data, 0, count);
                 }
 
 
-                //output.flush();
-                //output.close();
                 input.close();
 
                 StringBuffer buffer = new StringBuffer();
@@ -346,7 +348,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 reader.close();
 
-                //return resultJson;
 
                 resultJson = buffer.toString();
                 JSONObject parentObject = new JSONObject(resultJson);
@@ -357,15 +358,9 @@ public class MainActivity extends AppCompatActivity {
 
                 String dailyQuote = finalObject.getString("quote");
 
-                /*JSONObject error = parentObject.getJSONObject("error");
-                String errorCode = error.getString("code");
-                String errorMessage = error.getString("message");
-
-                return dailyQuote + errorCode + errorMessage;*/
 
                 return dailyQuote;
 
-                //return resultJson;
 
 
             } catch (MalformedURLException e) {
@@ -377,9 +372,6 @@ public class MainActivity extends AppCompatActivity {
             }  catch (JSONException e) {
                 e.printStackTrace();
             } finally {
-                /*if (connection != null) {
-                    connection.disconnect();
-                }*/
                 try {
                     if (reader != null) {
 
@@ -416,11 +408,9 @@ public class MainActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT).show();
                                 }
                             });
                     alertDialog.show();
-                    //Toast.makeText(MainActivity.this, "Too many requests for this page. Please wait 1 hour before send a new request! ", Toast.LENGTH_LONG).show();
                 } else {
                     if (myDb.checkQuote(showOutput.getText().toString()) == true) {
                         Toast.makeText(getBaseContext(), "Completed." + "\n" + "Quote already exist in the database! Add another one tomorrow.", Toast.LENGTH_LONG).show();

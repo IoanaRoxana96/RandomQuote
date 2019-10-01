@@ -59,9 +59,9 @@ public class AESEncryptionManager {
         return byteBuffer.array();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+   /* @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static byte[] decryptData(String key, byte[] encryptedData)
-        throws NoSuchPaddingException,
+            throws NoSuchPaddingException,
             NoSuchAlgorithmException,
             InvalidAlgorithmParameterException,
             InvalidKeyException,
@@ -96,7 +96,7 @@ public class AESEncryptionManager {
         //encrypt data
         return cipher.doFinal(cipherBytes);
     }
-
+*/
     public static SecretKey generateSecretKey(String password, byte[] iv) throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeySpec spec = new PBEKeySpec(password.toCharArray(), iv, 65536, 128);
         SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
