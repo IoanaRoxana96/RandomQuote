@@ -56,18 +56,13 @@ public class MainActivity extends AppCompatActivity {
     String OriginalHex = null;
     String NewHex = null;
 
-
-
     private static String file_url = "http://quotes.rest/qod.json";
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         myDb = new DatabaseHelper(this);
         editQuote = (EditText) findViewById(R.id.editQuote);
@@ -82,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
         createCheckSum = (Button) findViewById(R.id.checksum_button);
         createInitialCheckSum = (Button) findViewById(R.id.initialchecksum_button);
         showOutput = (TextView) findViewById(R.id.showOutput);
-
-
 
         addQuoteToDB();
         deleteQuoteFromDB();
@@ -102,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     public void createInitialCheckSum() {
@@ -157,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
             result.append(String.format("%02x", b));
         }
         return result.toString();
-
-
     }
 
     public void check() {
@@ -167,19 +156,16 @@ public class MainActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onClick(View view) {
-                        if (OriginalHex.equals(NewHex) )
+                        if (OriginalHex.equals(NewHex))
                             Toast.makeText(MainActivity.this, "Database is not corrupted", Toast.LENGTH_SHORT).show();
-                         else
+                        else
                             Toast.makeText(MainActivity.this, "Database corrupted", Toast.LENGTH_SHORT).show();
                         Log.d("Verificare hex original", OriginalHex);
                         Log.d("Verificare hex nou", NewHex);
-
-
                     }
-                    }
+                }
         );
     }
-
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -197,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
                             showMessage("Error!!!", "Nothing found!");
                             return;
                         }
-
                         StringBuffer buffer = new StringBuffer();
                         while (res1.moveToNext()) {
                             buffer.append("Id: " + res1.getString(0) + "\n");
@@ -224,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void randomQuote() {
-
         randomQuote.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -255,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
                             myDb.insertQuote(editQuote.getText().toString());
                             myDb.insertQuote2(editQuote.getText().toString());
                             Toast.makeText(getBaseContext(), "Quote inserted!", Toast.LENGTH_LONG).show();
-
                         }
                         editQuote.setText("");
                     }
@@ -272,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
                             showMessage("Error!!!", "Nothing found!");
                             return;
                         }
-
                         StringBuffer buffer = new StringBuffer();
                         while (res.moveToNext()) {
                             buffer.append("Id: " + res.getString(0) + "\n");
@@ -308,8 +290,6 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.setCancelable(false);
             progressDialog.setIndeterminate(false);
             progressDialog.show();
-            //progressBar.setProgress(0);
-
         }
 
 
@@ -318,17 +298,12 @@ public class MainActivity extends AppCompatActivity {
             int count;
             publishProgress(0);
             try {
-
                 //Log.d("Verificare", "Intru in doInBackground");
-
                 URL url = new URL(params[0]);
                 URLConnection connection = url.openConnection();
-
                 int lengthOfFile = connection.toString().length();
                 //Log.d("Verificare", "Lungime content   " + lengthOfFile);
-
                 InputStream input = url.openStream();
-
 
                 byte data[] = new byte[1024];
                 long total = 0;
@@ -336,7 +311,6 @@ public class MainActivity extends AppCompatActivity {
                     total += count;
                     publishProgress((int) ((total * 100) / lengthOfFile));
                 }
-
 
                 input.close();
 
@@ -348,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 reader.close();
 
-
                 resultJson = buffer.toString();
                 JSONObject parentObject = new JSONObject(resultJson);
                 JSONObject object = parentObject.getJSONObject("contents");
@@ -358,11 +331,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String dailyQuote = finalObject.getString("quote");
 
-
                 return dailyQuote;
-
-
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 System.err.println("Malformed URL encountered: " + e.getMessage());
@@ -374,7 +343,6 @@ public class MainActivity extends AppCompatActivity {
             } finally {
                 try {
                     if (reader != null) {
-
                         reader.close();
                     }
                 } catch (IOException e) {
@@ -383,16 +351,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return null;
-
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
             progressDialog.setProgress(progress[0]);
-
         }
-
 
         @Override
         protected void onPostExecute(String result) {
@@ -418,18 +383,13 @@ public class MainActivity extends AppCompatActivity {
                         myDb.insertQuote(showOutput.getText().toString());
                         myDb.insertQuote2(showOutput.getText().toString());
                         Toast.makeText(getBaseContext(), "Completed." + "\n" + "Quote inserted!", Toast.LENGTH_LONG).show();
-
                     }
                 }
             } else {
                 Toast.makeText(getBaseContext(),"No internet connection! Please connect if you want to see the quote of the day!", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
-
-
-
 }
 
 
